@@ -25,6 +25,7 @@ qrc_*.cpp
 ui_*.h
 Makefile*
 *-build-*
+src/log4qt/install/**
 
 # QtCreator
 
