@@ -36,7 +36,7 @@ TTCCLayout::TTCCLayout(QObject *parent) :
     mContextPrinting(true),
     mThreadPrinting(true)
 {
-    setDateFormat(RELATIVE);
+    setDateFormat(RELATIVEDATE);
 }
 
 TTCCLayout::TTCCLayout(const QString &dateFormat,
@@ -69,13 +69,13 @@ void TTCCLayout::setDateFormat(DateFormat dateFormat)
     case ISO8601:
         setDateFormat(QStringLiteral("ISO8601"));
         break;
-    case ABSOLUTE:
+    case ABSOLUTEDATE:
         setDateFormat(QStringLiteral("ABSOLUTE"));
         break;
     case DATE:
         setDateFormat(QStringLiteral("DATE"));
         break;
-    case RELATIVE:
+    case RELATIVEDATE:
         setDateFormat(QStringLiteral("RELATIVE"));
         break;
     default:
