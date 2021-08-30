@@ -33,3 +33,4 @@ class Log4QtConan(ConanFile):
 
         ## Extend the include path variable
         self.cpp_info.includedirs.extend(['log4qt/include'])
+
