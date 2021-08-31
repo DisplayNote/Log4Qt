@@ -24,7 +24,7 @@ class Log4QtConan(ConanFile):
     def package(self):
         self.copy("log4qt.dll", src='log4qt/install/lib/bin', dst='log4qt/lib', keep_path=False)
         self.copy("log4qt.lib", src='log4qt/install/lib/bin', dst='log4qt/lib', keep_path=False)
-        self.copy('*', src='log4qt/install/include', dst='log4qt/include', keep_path=False)
+        self.copy('*', src='log4qt/install/include', dst='log4qt/include')
     
     def package_info(self):
         ## Add libraries stored in lib folder
