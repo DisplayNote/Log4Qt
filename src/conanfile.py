@@ -22,9 +22,11 @@ class Log4QtConan(ConanFile):
     generators = 'qmake'
 
     def package(self):
-        self.copy("log4qt.dll", src='log4qt/install/lib/bin', dst='log4qt/lib', keep_path=False)
-        self.copy("log4qt.lib", src='log4qt/install/lib/bin', dst='log4qt/lib', keep_path=False)
         self.copy('*', src='log4qt/install/include', dst='log4qt/include')
+        if self.settings.os == 'Windows':
+            self.copy("log4qt.dll", src='log4qt/install/lib', dst='log4qt/lib', keep_path=False)
+            self.copy("log4qt.lib", src='log4qt/install/lib', dst='log4qt/lib', keep_path=False)
+         
     
     def package_info(self):
         ## Add libraries stored in lib folder

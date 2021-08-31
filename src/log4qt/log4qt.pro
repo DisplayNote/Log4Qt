@@ -24,6 +24,10 @@ DEFINES += NOMINMAX QT_DEPRECATED_WARNINGS QT_NO_CAST_FROM_BYTEARRAY QT_USE_QSTR
 DEFINES += LOG4QT_LIBRARY
 
 
+target.files = $$files($$DESTDIR/*)
+target.path = $$INSTALL_PREFIX/lib$$LIB_SUFFIX
+INSTALLS = target
+
 header_base.files = $$HEADERS_BASE
 header_base.path = $$INSTALL_PREFIX/include/log4qt
 INSTALLS += header_base
@@ -36,6 +40,4 @@ INSTALLS += header_spi
 header_varia.files = $$HEADERS_VARIA
 header_varia.path = $$INSTALL_PREFIX/include/log4qt/varia
 INSTALLS += header_varia
-target.files = $${DESTDIR}
-target.path = $$INSTALL_PREFIX/lib
-INSTALLS += target
+
