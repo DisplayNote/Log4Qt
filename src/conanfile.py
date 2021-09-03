@@ -26,6 +26,10 @@ class Log4QtConan(ConanFile):
         if self.settings.os == 'Windows':
             self.copy("log4qt.dll", src='log4qt/install/lib', dst='log4qt/lib', keep_path=False)
             self.copy("log4qt.lib", src='log4qt/install/lib', dst='log4qt/lib', keep_path=False)
+        elif self.settings.os == 'Macos':
+            self.copy("*", src='log4qt/install/lib', dst='log4qt/lib', keep_path=False)
+        elif self.settings.os == 'iOS':
+            self.copy("*.a", src='log4qt/install/lib', dst='log4qt/lib', keep_path=False)
          
     
     def package_info(self):
