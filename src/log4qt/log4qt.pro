@@ -12,21 +12,31 @@ contains(DEFINES, LOG4QT_STATIC) {
 }
 
 TEMPLATE = lib
-TARGET = log4qt
+
 QT -= gui
+android:versionAtLeast(QT_VERSION, 5.14) {
+    TARGET = log4qt_$${QT_ARCH}
+}
+else {
+    TARGET = log4qt
+}
 
 # .. is needed for msvc since it is treating '.' as the directory of the current file
 # and not the directory where the compiled source is found
 INCLUDEPATH += .. .
 
-DESTDIR = ../../bin
 DEFINES += NOMINMAX QT_DEPRECATED_WARNINGS QT_NO_CAST_FROM_BYTEARRAY QT_USE_QSTRINGBUILDER
 DEFINES += LOG4QT_LIBRARY
 
-
-target.files = $$files($$DESTDIR/*)
-target.path = $$INSTALL_PREFIX/lib$$LIB_SUFFIX
-INSTALLS = target
+android:versionAtLeast(QT_VERSION, 5.14) {
+    DESTDIR = $$INSTALL_PREFIX/lib$$LIB_SUFFIX
+}
+else {
+    DESTDIR = ../../bin
+    target.files = $$files($$DESTDIR/*)
+    target.path = $$INSTALL_PREFIX/lib$$LIB_SUFFIX
+    INSTALLS = target
+}
 
 header_base.files = $$HEADERS_BASE
 header_base.path = $$INSTALL_PREFIX/include/log4qt
