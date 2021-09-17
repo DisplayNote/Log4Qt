@@ -34,3 +34,6 @@ src/log4qt/install/**
 #QtCtreator Qml
 *.qmlproject.user
 *.qmlproject.user.*
+*.obj
+
+
