@@ -12,8 +12,8 @@ contains(DEFINES, LOG4QT_STATIC) {
 }
 
 TEMPLATE = lib
-QT -= gui
 
+QT -= gui
 android:versionAtLeast(QT_VERSION, 5.14) {
     TARGET = log4qt_$${QT_ARCH}
 }
@@ -32,7 +32,6 @@ android:versionAtLeast(QT_VERSION, 5.14) {
     DESTDIR = $$INSTALL_PREFIX/lib$$LIB_SUFFIX
 }
 else {
-    android: TARGET = log4qt_armabi-v7a
     DESTDIR = ../../bin
     target.files = $$files($$DESTDIR/*)
     target.path = $$INSTALL_PREFIX/lib$$LIB_SUFFIX

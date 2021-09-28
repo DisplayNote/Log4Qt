@@ -25,14 +25,11 @@ class Log4QtConan(ConanFile):
             self.copy("log4qt.dll", src='log4qt/install/lib', dst='lib', keep_path=False)
             self.copy("log4qt.lib", src='log4qt/install/lib', dst='lib', keep_path=False)
         elif self.settings.os == 'Macos':
-            self.copy("*.dylib", src='log4qt/install/lib', dst='lib', keep_path=False)
+            self.copy("*", src='log4qt/install/lib', dst='lib', keep_path=False)
         elif self.settings.os == 'iOS':
             self.copy("*.a", src='log4qt/install/lib', dst='lib', keep_path=False)
         elif self.settings.os == 'Android':
-            if self.settings.arch == 'multiarch':
-                self.copy("*.so", src='log4qt/install/lib', dst='lib', keep_path=False)
-            else:
-                self.copy("*.so", src='log4qt', dst='lib', keep_path=False)
+            self.copy("*.so", src='log4qt/install/lib', dst='lib', keep_path=False)
 
     def package_info(self):
         ## Add libraries stored in lib folder
