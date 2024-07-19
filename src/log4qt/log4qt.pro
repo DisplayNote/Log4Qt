@@ -2,7 +2,6 @@ QT += core xml network concurrent
 include(../../build.pri)
 include(../../g++.pri)
 include(log4qt.pri)
-include(install.pri)
 
 CONFIG += c++17 \
           hide_symbols
@@ -32,6 +31,10 @@ INCLUDEPATH += .. .
 
 DEFINES += NOMINMAX QT_DEPRECATED_WARNINGS QT_NO_CAST_FROM_BYTEARRAY QT_USE_QSTRINGBUILDER
 DEFINES += LOG4QT_LIBRARY
+
+isEmpty(INSTALL_PREFIX) {
+    INSTALL_PREFIX = $$PWD/install/
+}
 
 android:versionAtLeast(QT_VERSION, 5.14) {
     DESTDIR = $$INSTALL_PREFIX/lib$$LIB_SUFFIX
