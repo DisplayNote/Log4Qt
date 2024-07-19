@@ -2,6 +2,7 @@ QT += core xml network concurrent
 include(../../build.pri)
 include(../../g++.pri)
 include(log4qt.pri)
+include(install.pri)
 
 CONFIG += c++17 \
           hide_symbols
@@ -19,6 +20,10 @@ android:versionAtLeast(QT_VERSION, 5.14) {
 }
 else {
     TARGET = log4qt
+}
+
+macx {
+    QMAKE_APPLE_DEVICE_ARCHS = x86_64
 }
 
 # .. is needed for msvc since it is treating '.' as the directory of the current file
