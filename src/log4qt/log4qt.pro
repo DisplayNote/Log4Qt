@@ -25,6 +25,10 @@ macx {
     QMAKE_APPLE_DEVICE_ARCHS = x86_64
 }
 
+ios {
+    QMAKE_IOS_DEPLOYMENT_TARGET = 14.0
+}
+
 # .. is needed for msvc since it is treating '.' as the directory of the current file
 # and not the directory where the compiled source is found
 INCLUDEPATH += .. .
