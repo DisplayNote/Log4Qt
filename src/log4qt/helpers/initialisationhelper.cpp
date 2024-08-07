@@ -64,6 +64,7 @@ void InitialisationHelper::doInitialiseEnvironmentSettings()
     for (const auto &entry : qAsConst(setting_keys))
         env_keys.insert(QStringLiteral("log4qt_").append(entry).toUpper(), entry);
 
+    #if !defined(Q_OS_IOS)
     QStringList sys_env = QProcess::systemEnvironment();
     for (const auto &entry : qAsConst(sys_env))
     {
@@ -75,6 +76,7 @@ void InitialisationHelper::doInitialiseEnvironmentSettings()
         if (env_keys.contains(key))
             mEnvironmentSettings.insert(env_keys.value(key), value);
     }
+    #endif
 }
 
 void InitialisationHelper::doRegisterTypes()

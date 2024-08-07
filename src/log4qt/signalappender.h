@@ -46,7 +46,7 @@ Q_SIGNALS:
     /*!
     * @param message
     */
-    void appended(const QString &message);
+    void appended(const int level, const QString &message);
 
 };
 
