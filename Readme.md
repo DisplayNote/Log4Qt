@@ -77,6 +77,39 @@ use qmake to build the project
 
     Logging to a database via databaseappender can be enabled with qmake "QT += sql"
 
+#### macOS (Intel and Apple Silicon)
+By default the macOS build targets the architecture of the machine running qmake
+(`arm64` on Apple Silicon, `x86_64` on Intel), via `QMAKE_HOST.arch`.
+
+    qmake
+    make
+    make install
+
+To target a specific architecture instead (e.g. cross-building `x86_64` on an
+Apple Silicon host, or vice versa), pass `QMAKE_APPLE_DEVICE_ARCHS` on the
+qmake command line:
+
+    *NIX (macOS, Apple Silicon)
+        qmake "QMAKE_APPLE_DEVICE_ARCHS=arm64"
+        make
+        make install
+
+    *NIX (macOS, Intel)
+        qmake "QMAKE_APPLE_DEVICE_ARCHS=x86_64"
+        make
+        make install
+
+To build a universal (fat) binary containing both architectures in one pass,
+list them space-separated:
+
+    qmake "QMAKE_APPLE_DEVICE_ARCHS=arm64 x86_64"
+    make
+    make install
+
+Building each architecture separately (rather than as a single universal
+binary) is required when packaging separate per-arch Conan packages, e.g.
+`-s arch=armv8` and `-s arch=x86_64` for the `Macos` conan setting.
+
 ### include in your project
 Can also be used by adding the log4qt source directly to your Qt project file by adding the following line:
 include(<unpackdir>/src/log4qt/log4qt.pri)

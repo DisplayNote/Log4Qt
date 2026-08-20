@@ -22,7 +22,7 @@ else {
 }
 
 macx {
-    QMAKE_APPLE_DEVICE_ARCHS = x86_64
+    isEmpty(QMAKE_APPLE_DEVICE_ARCHS): QMAKE_APPLE_DEVICE_ARCHS = $$QMAKE_HOST.arch
 }
 
 ios {
