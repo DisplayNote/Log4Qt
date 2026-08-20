@@ -78,8 +78,11 @@ use qmake to build the project
     Logging to a database via databaseappender can be enabled with qmake "QT += sql"
 
 #### macOS (Intel and Apple Silicon)
-By default the macOS build targets the architecture of the machine running qmake
-(`arm64` on Apple Silicon, `x86_64` on Intel), via `QMAKE_HOST.arch`.
+By default the macOS build targets qmake's detected host architecture
+(`QMAKE_HOST.arch`). This normally matches the physical machine (`arm64` on
+Apple Silicon, `x86_64` on Intel), but reflects the architecture of the qmake
+binary itself — e.g. an x86_64 qmake run under Rosetta on Apple Silicon will
+default to `x86_64`.
 
     qmake
     make
