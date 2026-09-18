@@ -33,6 +33,8 @@
 
 #include <QFile>
 
+#include <utility>
+
 namespace Log4Qt
 {
 
@@ -263,7 +265,7 @@ void PropertyConfigurator::configureNonRootElements(const Properties &properties
     // - Parse logger additivity
 
     QStringList keys = properties.propertyNames();
-    for (const auto &key : qAsConst(keys))
+    for (const auto &key : std::as_const(keys))
     {
         QString java_name;
         if (key.startsWith(logger_prefix))
@@ -516,7 +518,7 @@ void PropertyConfigurator::setProperties(const Properties &properties,
                     prefix);
 
     QStringList keys = properties.propertyNames();
-    for (const auto &key : qAsConst(keys))
+    for (const auto &key : std::as_const(keys))
     {
         if (!key.startsWith(prefix))
             continue;

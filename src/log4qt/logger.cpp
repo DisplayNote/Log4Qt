@@ -31,6 +31,8 @@
 #include <QThread>
 #include <QCoreApplication>
 
+#include <utility>
+
 namespace Log4Qt
 {
 
@@ -68,7 +70,7 @@ void Logger::callAppenders(const LoggingEvent &event) const
 {
     QReadLocker locker(&mAppenderGuard);
 
-    for (auto &&appender : qAsConst(mAppenders))
+    for (auto &&appender : std::as_const(mAppenders))
         appender->doAppend(event);
     if (additivity() && (parentLogger() != nullptr))
         parentLogger()->callAppenders(event);

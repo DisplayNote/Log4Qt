@@ -113,8 +113,4 @@ public:
 
 } // namespace Log4Qt
 
-
-Q_DECLARE_TYPEINFO(Log4Qt::OptionConverter, Q_MOVABLE_TYPE);
-
-
 #endif // LOG4QT_OPTIONCONVERTER_H

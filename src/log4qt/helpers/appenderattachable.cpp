@@ -22,6 +22,8 @@
 #include "varia/listappender.h"
 #include "appender.h"
 
+#include <utility>
+
 namespace Log4Qt
 {
 
@@ -42,7 +44,7 @@ AppenderSharedPtr AppenderAttachable::appender(const QString &name) const
 {
     QReadLocker locker(&mAppenderGuard);
 
-    for (auto &&pAppender : qAsConst(mAppenders))
+    for (auto &&pAppender : std::as_const(mAppenders))
         if (pAppender->name() == name)
             return pAppender;
     return AppenderSharedPtr();

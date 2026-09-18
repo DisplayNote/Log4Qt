@@ -6,7 +6,7 @@ import "../../log4qtlib.qbs" as ProductLibrary
 ProductLibrary {
     id: library
     name: "log4qt"
-    version: "1.6.0"
+    version: "1.7.0"
     property int versionMajor: parseInt(version.split('.')[0])
     property int versionMinor: parseInt(version.split('.')[1])
     property int versionPatch: parseInt(version.split('.')[2])
@@ -15,7 +15,7 @@ ProductLibrary {
     cpp.defines: ["LOG4QT_LIBRARY",
                   "NOMINMAX",
                   "QT_DEPRECATED_WARNINGS",
-                  "QT_DISABLE_DEPRECATED_BEFORE=0x050F00",
+                  "QT_DISABLE_DEPRECATED_BEFORE=0x060800",
                   "QT_NO_CAST_FROM_BYTEARRAY",
                   "QT_USE_QSTRINGBUILDER",
                   "LOG4QT_VERSION_STR=\"" + library.version + "\"",

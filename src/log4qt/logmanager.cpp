@@ -38,9 +38,12 @@
 #include <QStringList>
 #include <QFileInfo>
 #include <QLoggingCategory>
+#include <QTimeZone>
 #include <QStringBuilder>
 
 #include <cstdlib>
+
+#include <utility>
 
 namespace Log4Qt
 {
@@ -318,7 +321,7 @@ void LogManager::doStartup()
 
     filesToCheck << default_file;
 
-    for (const auto &configFileName: qAsConst(filesToCheck))
+    for (const auto &configFileName: std::as_const(filesToCheck))
     {
         // Configuration using default file
         if (QFile::exists(configFileName))
@@ -349,7 +352,7 @@ void LogManager::welcome()
         {
             QDateTime utc = start_time.toUTC();
             QDateTime local = start_time.toLocalTime();
-            QDateTime local_as_utc = QDateTime(local.date(), local.time(), Qt::UTC);
+            QDateTime local_as_utc = QDateTime(local.date(), local.time(), QTimeZone::UTC);
             int min = utc.secsTo(local_as_utc) / 60;
             if (min < 0)
                 offset += QLatin1Char('-');

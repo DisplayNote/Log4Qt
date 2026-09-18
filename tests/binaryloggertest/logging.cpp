@@ -1,6 +1,7 @@
 #include "logging.h"
 
 #include <QByteArray>
+#include <QMetaType>
 #include <QVariant>
 #include <QDateTime>
 #include <QStringBuilder>
@@ -85,131 +86,135 @@ QString Logging::toString(const QVariant &value)
 
 QString toString(const QVariant &value)
 {
-    switch (value.type())
+    const int typeId = value.typeId();
+
+    // In Qt 6 a user type is no longer a single enum value, it is every id at
+    // or above QMetaType::User, so it cannot be written as a case label.
+    if (typeId >= QMetaType::User)
+        return toString(value, value.userType());
+
+    switch (typeId)
     {
-    case QVariant::Invalid:
+    case QMetaType::UnknownType:
         return QStringLiteral("<Invalid>");
-    case QVariant::BitArray:
+    case QMetaType::QBitArray:
         return QStringLiteral("<BitArray>");
-    case QVariant::Bitmap:
+    case QMetaType::QBitmap:
         return QStringLiteral("<Bitmap>");
-    case QVariant::Brush:
+    case QMetaType::QBrush:
         return QStringLiteral("<Brush>");
-    case QVariant::Color:
+    case QMetaType::QColor:
         return QStringLiteral("<Color>");
-    case QVariant::Cursor:
+    case QMetaType::QCursor:
         return QStringLiteral("<Cursor>");
-    case QVariant::EasingCurve:
+    case QMetaType::QEasingCurve:
         return QStringLiteral("<EasingCurve>");
-    case QVariant::ModelIndex:
+    case QMetaType::QModelIndex:
         return QStringLiteral("<ModelIndex>");
-    case QVariant::Font:
+    case QMetaType::QFont:
         return QStringLiteral("<Font>");
-    case QVariant::Icon:
+    case QMetaType::QIcon:
         return QStringLiteral("<Icon>");
-    case QVariant::Image:
+    case QMetaType::QImage:
         return QStringLiteral("<Image>");
-    case QVariant::KeySequence:
+    case QMetaType::QKeySequence:
         return QStringLiteral("<KeySequence>");
-    case QVariant::Line:
+    case QMetaType::QLine:
         return QStringLiteral("<Line>");
-    case QVariant::LineF:
+    case QMetaType::QLineF:
         return QStringLiteral("<LineF>");
-    case QVariant::Locale:
+    case QMetaType::QLocale:
         return QStringLiteral("<Locale>");
 #if QT_VERSION < 0x060000
     case QVariant::Matrix:
         return QStringLiteral("<Matrix>");
 #endif
-    case QVariant::Transform:
+    case QMetaType::QTransform:
         return QStringLiteral("<Transform>");
-    case QVariant::Matrix4x4:
+    case QMetaType::QMatrix4x4:
         return QStringLiteral("<Matrix4x4>");
-    case QVariant::Palette:
+    case QMetaType::QPalette:
         return QStringLiteral("<Palette>");
-    case QVariant::Pen:
+    case QMetaType::QPen:
         return QStringLiteral("<Pen>");
-    case QVariant::Pixmap:
+    case QMetaType::QPixmap:
         return QStringLiteral("<Pixmap>");
-    case QVariant::Point:
+    case QMetaType::QPoint:
         return QStringLiteral("<Point>");
-    case QVariant::PointF:
+    case QMetaType::QPointF:
         return QStringLiteral("<PointF>");
-    case QVariant::Polygon:
+    case QMetaType::QPolygon:
         return QStringLiteral("<Polygon>");
-    case QVariant::PolygonF:
+    case QMetaType::QPolygonF:
         return QStringLiteral("<PolygonF>");
-    case QVariant::Quaternion:
+    case QMetaType::QQuaternion:
         return QStringLiteral("<Quaternion>");
-    case QVariant::Rect:
+    case QMetaType::QRect:
         return QStringLiteral("<Rect>");
-    case QVariant::RectF:
+    case QMetaType::QRectF:
         return QStringLiteral("<RectF>");
 #if QT_VERSION < 0x060000
     case QVariant::RegExp:
         return QStringLiteral("<RegExp>");
 #endif
-    case QVariant::RegularExpression:
+    case QMetaType::QRegularExpression:
         return QStringLiteral("<RegularExpression>");
-    case QVariant::Region:
+    case QMetaType::QRegion:
         return QStringLiteral("<Region>");
-    case QVariant::Size:
+    case QMetaType::QSize:
         return QStringLiteral("<Size>");
-    case QVariant::SizeF:
+    case QMetaType::QSizeF:
         return QStringLiteral("<SizeF>");
-    case QVariant::SizePolicy:
+    case QMetaType::QSizePolicy:
         return QStringLiteral("<SizePolicy>");
-    case QVariant::TextFormat:
+    case QMetaType::QTextFormat:
         return QStringLiteral("<TextFormat>");
-    case QVariant::TextLength:
+    case QMetaType::QTextLength:
         return QStringLiteral("<TextLength>");
-    case QVariant::Vector2D:
+    case QMetaType::QVector2D:
         return QStringLiteral("<Vector2D>");
-    case QVariant::Vector3D:
+    case QMetaType::QVector3D:
         return QStringLiteral("<Vector3D>");
-    case QVariant::Vector4D:
+    case QMetaType::QVector4D:
         return QStringLiteral("<Vector4D>");
 
-    case QVariant::Int:
-    case QVariant::Double:
-    case QVariant::Char:
-    case QVariant::Bool:
-    case QVariant::UInt:
-    case QVariant::LongLong:
-    case QVariant::ULongLong:
-    case QVariant::Url:
-    case QVariant::Uuid:
+    case QMetaType::Int:
+    case QMetaType::Double:
+    case QMetaType::QChar:
+    case QMetaType::Bool:
+    case QMetaType::UInt:
+    case QMetaType::LongLong:
+    case QMetaType::ULongLong:
+    case QMetaType::QUrl:
+    case QMetaType::QUuid:
         return value.toString();
 
-    case QVariant::ByteArray:
+    case QMetaType::QByteArray:
         return toString(value.toByteArray());
 
-    case QVariant::Date:
+    case QMetaType::QDate:
         return toString(value.toDate());
 
-    case QVariant::DateTime:
+    case QMetaType::QDateTime:
         return toString(value.toDateTime());
 
-    case QVariant::Hash:
+    case QMetaType::QVariantHash:
         return toString(value.toHash());
 
-    case QVariant::List:
+    case QMetaType::QVariantList:
         return toString(value.toList());
 
-    case QVariant::Map:
+    case QMetaType::QVariantMap:
         return toString(value.toMap());
 
-    case QVariant::String:
+    case QMetaType::QString:
         return toString(value.toString());
 
-    case QVariant::StringList:
+    case QMetaType::QStringList:
         return toString(value.toStringList());
 
-    case QVariant::Time:
+    case QMetaType::QTime:
         return toString(value.toTime());
-
-    case QVariant::UserType:
-        return toString(value, value.userType());
 
     default:
         break;

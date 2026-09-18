@@ -26,6 +26,8 @@
 #include <QSettings>
 #include <QTextStream>
 
+#include <utility>
+
 namespace Log4Qt
 {
 
@@ -69,7 +71,7 @@ void Properties::load(QIODevice *pDevice)
 void Properties::load(const QSettings &settings)
 {
     QStringList keys = settings.childKeys();
-    for (const auto &key : qAsConst(keys))
+    for (const auto &key : std::as_const(keys))
         insert(key, settings.value(key).toString());
 }
 
@@ -108,7 +110,7 @@ QStringList Properties::propertyNames() const
         default_keys = mpDefaultProperties->propertyNames();
 
     QStringList keys = this->keys();
-    for (const auto &key : qAsConst(default_keys))
+    for (const auto &key : std::as_const(default_keys))
         if (!keys.contains(key))
             keys << key;
 

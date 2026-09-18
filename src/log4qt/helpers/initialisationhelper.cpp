@@ -27,11 +27,14 @@
 #include <QCoreApplication>
 #include <QMutex>
 #include <QProcess>
+#include <QProcessEnvironment>
 #include <QSettings>
 
 #ifndef QT_NO_DATASTREAM
 #include <QDataStream>
 #endif
+
+#include <utility>
 
 namespace Log4Qt
 {
@@ -61,12 +64,12 @@ void InitialisationHelper::doInitialiseEnvironmentSettings()
     setting_keys << QStringLiteral("Configuration");
 
     QHash<QString, QString> env_keys;
-    for (const auto &entry : qAsConst(setting_keys))
+    for (const auto &entry : std::as_const(setting_keys))
         env_keys.insert(QStringLiteral("log4qt_").append(entry).toUpper(), entry);
 
     #if !defined(Q_OS_IOS)
-    QStringList sys_env = QProcess::systemEnvironment();
-    for (const auto &entry : qAsConst(sys_env))
+    QStringList sys_env = QProcessEnvironment::systemEnvironment().toStringList();
+    for (const auto &entry : std::as_const(sys_env))
     {
         int i = entry.indexOf(QLatin1Char('='));
         if (i == -1)

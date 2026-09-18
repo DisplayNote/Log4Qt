@@ -45,7 +45,7 @@ void MainThreadAppender::append(const LoggingEvent &event)
 {
     QReadLocker locker(&mAppenderGuard);
 
-    for (auto &&pAppender : qAsConst(mAppenders))
+    for (auto &&pAppender : std::as_const(mAppenders))
     {
         if (QThread::currentThread() != qApp->thread())
             qApp->postEvent(pAppender.data(), new LoggingEvent(event));
@@ -62,4 +62,6 @@ bool MainThreadAppender::checkEntryConditions() const
 } // namespace Log4Qt
 
 #include "moc_mainthreadappender.cpp"
+
+#include <utility>
 

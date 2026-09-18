@@ -24,6 +24,8 @@
 #include "binarylogger.h"
 #include "helpers/optionconverter.h"
 
+#include <utility>
+
 namespace Log4Qt
 {
 
@@ -78,7 +80,7 @@ void Hierarchy::resetConfiguration()
     Logger *p_qt_logger = logger(QStringLiteral("Qt"));
     Logger *p_root_logger = rootLogger();
 
-    for (auto &&p_logger : qAsConst(mLoggers))
+    for (auto &&p_logger : std::as_const(mLoggers))
     {
         if ((p_logger == p_logging_logger) || (p_logger == p_qt_logger) || (p_logger == p_root_logger))
             continue;

@@ -132,8 +132,4 @@ private:
 
 } // namespace Log4Qt
 
-
-Q_DECLARE_TYPEINFO(Log4Qt::PatternFormatter, Q_MOVABLE_TYPE);
-
-
 #endif // LOG4QT_PATTERNFORMATTER_H

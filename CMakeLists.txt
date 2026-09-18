@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.3.0)
-project(Log4Qt VERSION 1.6.0)
+project(Log4Qt VERSION 1.7.0)
 
 # in-source builds should be avoided
 set(Log4Qt_MODULE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
@@ -67,7 +67,7 @@ add_definitions(-DQT_NO_CAST_TO_ASCII)
 #add_definitions(-DQT_NO_CAST_FROM_ASCII)
 add_definitions(-DQT_NO_URL_CAST_FROM_STRING)
 add_definitions(-DQT_DEPRECATED_WARNINGS)
-add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0x050F00)
+add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0x060800)
 if(NOT MSVC)
     add_definitions(-DQT_STRICT_ITERATORS)
 endif()
