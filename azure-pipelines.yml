@@ -1,0 +1,64 @@
+trigger:
+  tags:
+    include:
+      - '*'
+
+pr:
+  branches:
+    include:
+      - '*'
+  paths:
+    exclude:
+      - doc
+      - Readme.md
+      - ChangeLog.md
+  drafts: false
+
+resources:
+  repositories:
+    - repository: ci
+      type: github
+      # Why do not use GITHUB_CONNECTION variable here? https://developercommunity.visualstudio.com/t/allow-variables-at-resourcesrepositoriesrepository/816606
+      endpoint: "DisplayNote through PAT."
+      name: DisplayNote/qt-conan-ci
+      # TEMPORARY - AB#141677. Flip to refs/tags/3.0.0 once the Qt 6.8.8 branch
+      # of qt-conan-ci is tagged, before this branch is merged.
+      ref: refs/heads/feature/141677_qt_6_8_8
+
+variables:
+  - group: montage-client-environment-variables
+
+stages:
+  - template: common/setup.yml@ci
+
+  # The macOS architecture is set by qt-conan-ci, per stage, and this repo pins
+  # none. Nothing is passed from here: the stages assign QMAKE_APPLE_DEVICE_ARCHS
+  # both before the .pro - which is what lets the .pro read it at parse time - and
+  # behind -after, so it still wins over any .pro that hardcodes an architecture.
+  # src/log4qt/log4qt.pro only defaults it to QMAKE_HOST.arch when it is empty.
+  - template: macos-x86_64/build.yml@ci
+    parameters:
+      projectFile: 'Log4Qt/log4qt.pro'
+
+  - template: macos-arm64/build.yml@ci
+    parameters:
+      projectFile: 'Log4Qt/log4qt.pro'
+
+  - template: ios-arm64/build.yml@ci
+    parameters:
+      projectFile: 'Log4Qt/log4qt.pro'
+
+  - template: android-multiabi/build.yml@ci
+    parameters:
+      projectFile: 'Log4Qt/log4qt.pro'
+
+  - template: msvc2022-x86_64/build.yml@ci
+    parameters:
+      projectFile: 'Log4Qt/log4qt.pro'
+
+  - template: common/deploy-develop.yml@ci
+    parameters:
+      conanfile: 'Log4Qt/src/conanfile.py'
+      packageName: 'log4qt'
+      stageDependencies: ['setup', 'msvc2022_x86_64', 'macos_x86_64', 'macos_arm64', 'ios_arm64', 'android_arm64_v8a', 'android_armv7', 'android_x86_64']
+      conanProfiles: ['msvc2022.x86_64', 'macos.x86_64', 'macos.arm64', 'ios.arm64', 'android.arm64-v8a', 'android.armeabi-v7a', 'android.x86_64']
