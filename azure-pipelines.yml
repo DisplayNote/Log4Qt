@@ -52,7 +52,7 @@ stages:
     parameters:
       projectFile: 'Log4Qt/log4qt.pro'
 
-  - template: msvc2022-x86_64/build.yml@ci
+  - template: windows-x86_64/build.yml@ci
     parameters:
       projectFile: 'Log4Qt/log4qt.pro'
 
@@ -60,5 +60,5 @@ stages:
     parameters:
       conanfile: 'Log4Qt/src/conanfile.py'
       packageName: 'log4qt'
-      stageDependencies: ['setup', 'msvc2022_x86_64', 'macos_x86_64', 'macos_arm64', 'ios_arm64', 'android_arm64_v8a', 'android_armv7', 'android_x86_64']
-      conanProfiles: ['msvc2022.x86_64', 'macos.x86_64', 'macos.arm64', 'ios.arm64', 'android.arm64-v8a', 'android.armeabi-v7a', 'android.x86_64']
+      stageDependencies: ['setup', 'windows_x86_64', 'macos_x86_64', 'macos_arm64', 'ios_arm64', 'android_arm64_v8a', 'android_armv7', 'android_x86_64']
+      conanProfiles: ['msvc19.x86_64', 'macos.x86_64', 'macos.arm64', 'ios.arm64', 'android.arm64-v8a', 'android.armeabi-v7a', 'android.x86_64']
