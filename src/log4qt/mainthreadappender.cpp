@@ -26,6 +26,8 @@
 #include <QReadLocker>
 #include <QThread>
 
+#include <utility>
+
 namespace Log4Qt
 {
 
@@ -62,6 +64,4 @@ bool MainThreadAppender::checkEntryConditions() const
 } // namespace Log4Qt
 
 #include "moc_mainthreadappender.cpp"
-
-#include <utility>
 
