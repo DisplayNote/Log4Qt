@@ -58,7 +58,7 @@ public:
 
     /*!
      * Constructs a datetime with the given \a date and \a time, using
-     * the time specification defined by \a timeSpec.
+     * the time zone defined by \a timeZone.
      *
      * \sa QDateTime::QDateTime(QDate date, QTime time,
      *     const QTimeZone &timeZone)
