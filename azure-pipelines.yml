@@ -21,9 +21,7 @@ resources:
       # Why do not use GITHUB_CONNECTION variable here? https://developercommunity.visualstudio.com/t/allow-variables-at-resourcesrepositoriesrepository/816606
       endpoint: "DisplayNote through PAT."
       name: DisplayNote/qt-conan-ci
-      # TEMPORARY - AB#141677. Flip to refs/tags/3.0.0 once the Qt 6.8.8 branch
-      # of qt-conan-ci is tagged, before this branch is merged.
-      ref: refs/heads/feature/141677_qt_6_8_8
+      ref: refs/tags/2.4.0
 
 variables:
   - group: montage-client-environment-variables
