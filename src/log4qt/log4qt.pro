@@ -44,6 +44,15 @@ isEmpty(INSTALL_PREFIX) {
     INSTALL_PREFIX = $$PWD/install/
 }
 
+# Qt's Android mkspec (mkspecs/features/android/android.prf) forces
+# target.path = /libs/$$ANDROID_TARGET_ARCH and adds it to INSTALLS for every
+# non-static lib. qt-conan-ci runs `make install` without INSTALL_ROOT, so that
+# rule tries to create /libs at the filesystem root:
+#     mkdir: cannot create directory '/libs': Permission denied
+# DESTDIR already stages the .so where the conan recipe looks for it, so drop the
+# implicit Android target install. Same fix as miracast-qt and googlecast-qt.
+android: CONFIG -= android_install
+
 # Build straight into the install tree on every platform, as the Android branch
 # already did. The previous non-Android branch built into ../../bin and installed
 # with target.files = $$files($$DESTDIR/*); $$files() is evaluated at qmake time,
