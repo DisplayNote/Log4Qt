@@ -26,6 +26,8 @@
 #include <QReadLocker>
 #include <QThread>
 
+#include <utility>
+
 namespace Log4Qt
 {
 
@@ -87,7 +89,7 @@ void AsyncAppender::callAppenders(const LoggingEvent &event) const
 {
     QReadLocker locker(&mAppenderGuard);
 
-    for (auto &&pAppender : qAsConst(mAppenders))
+    for (auto &&pAppender : std::as_const(mAppenders))
         pAppender->doAppend(event);
 }
 

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.3.0)
-project(Log4Qt VERSION 1.6.0)
+project(Log4Qt VERSION 1.7.0)
 
 # in-source builds should be avoided
 set(Log4Qt_MODULE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
@@ -37,23 +37,15 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
-# Min. Qt version is 5.12, we want to use cmake automoc feature
-# and settings some defines for Qt
+# Min. Qt version is 6.8 (see the hard floor in log4qt.h), we want to use cmake
+# automoc feature and settings some defines for Qt
 set(CMAKE_AUTOMOC TRUE)
-set(QT_MIN_VERSION 5.12.0)
+set(QT_MIN_VERSION 6.8.0)
 
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Concurrent Test REQUIRED)
+find_package(QT ${QT_MIN_VERSION} NAMES Qt6 COMPONENTS Core REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} ${QT_MIN_VERSION} COMPONENTS Core Concurrent Test REQUIRED)
 
-if (Qt6_FOUND)
-    message("Qt6 found.")
-    message(STATUS "Qt version is ${Qt6Core_VERSION}")
-elseif(Qt5_FOUND)
-    message("Qt5 found.")
-    message(STATUS "Qt version is ${Qt5Core_VERSION}")
-else()
-    message(FATAL_ERROR "No Qt found!")
-endif()
+message(STATUS "Qt version is ${Qt6Core_VERSION}")
 
 if(BUILD_WITH_DB_LOGGING)
     find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Sql REQUIRED)
@@ -67,7 +59,7 @@ add_definitions(-DQT_NO_CAST_TO_ASCII)
 #add_definitions(-DQT_NO_CAST_FROM_ASCII)
 add_definitions(-DQT_NO_URL_CAST_FROM_STRING)
 add_definitions(-DQT_DEPRECATED_WARNINGS)
-add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0x050F00)
+add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0x060800)
 if(NOT MSVC)
     add_definitions(-DQT_STRICT_ITERATORS)
 endif()

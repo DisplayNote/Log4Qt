@@ -24,6 +24,7 @@
 #include "log4qt/log4qtshared.h"
 
 #include <QDateTime>
+#include <QTimeZone>
 
 namespace Log4Qt
 {
@@ -57,14 +58,14 @@ public:
 
     /*!
      * Constructs a datetime with the given \a date and \a time, using
-     * the time specification defined by \a timeSpec.
+     * the time zone defined by \a timeZone.
      *
-     * \sa QDateTime::QDateTime(const QDate &date, const QTime &time,
-     *     Qt::TimeSpec timeSpec = Qt::LocalTime)
+     * \sa QDateTime::QDateTime(QDate date, QTime time,
+     *     const QTimeZone &timeZone)
      */
     DateTime(QDate date,
              QTime time,
-             Qt::TimeSpec timeSpec = Qt::LocalTime);
+             const QTimeZone &timeZone = QTimeZone::LocalTime);
 
     /*!
      * Assigns \a other to this DateTime and returns a reference to it.
@@ -112,7 +113,7 @@ public:
      * \sa QDateTime::currentDateTime()
      */
     static DateTime currentDateTime();
-    static DateTime fromMSecsSinceEpoch(qint64 msecs, Qt::TimeSpec spec, int offsetSeconds = 0);
+    static DateTime fromMSecsSinceEpoch(qint64 msecs, const QTimeZone &timeZone);
     static DateTime fromMSecsSinceEpoch(qint64 msecs);
 
 private:
@@ -124,8 +125,8 @@ inline DateTime::DateTime(const QDateTime &other) : QDateTime(other)
 
 inline DateTime::DateTime(QDate date,
                           QTime time,
-                          Qt::TimeSpec timeSpec) :
-    QDateTime(date, time, timeSpec)
+                          const QTimeZone &timeZone) :
+    QDateTime(date, time, timeZone)
 {}
 
 inline DateTime &DateTime::operator=(const DateTime &other)
@@ -144,9 +145,9 @@ inline DateTime DateTime::fromMSecsSinceEpoch(qint64 msecs)
     return DateTime(QDateTime::fromMSecsSinceEpoch(msecs));
 }
 
-inline DateTime DateTime::fromMSecsSinceEpoch(qint64 msecs, Qt::TimeSpec spec, int offsetSeconds)
+inline DateTime DateTime::fromMSecsSinceEpoch(qint64 msecs, const QTimeZone &timeZone)
 {
-    return DateTime(QDateTime::fromMSecsSinceEpoch(msecs, spec, offsetSeconds));
+    return DateTime(QDateTime::fromMSecsSinceEpoch(msecs, timeZone));
 }
 
 } // namespace Log4Qt

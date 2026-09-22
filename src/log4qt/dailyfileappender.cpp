@@ -31,6 +31,8 @@
 #include <QtConcurrentRun>
 #include <QStringBuilder>
 
+#include <utility>
+
 namespace Log4Qt
 {
 
@@ -125,7 +127,7 @@ void deleteObsoleteFiles(
         }
     }
 
-    for (const auto &fileName : qAsConst(obsoleteLogFileNames))
+    for (const auto &fileName : std::as_const(obsoleteLogFileNames))
     {
         QFile::remove(logDir.filePath(fileName));
     }

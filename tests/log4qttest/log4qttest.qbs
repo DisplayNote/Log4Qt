@@ -16,7 +16,7 @@ Product {
 
     cpp.cxxLanguageVersion: "c++17"
 
-    cpp.defines: [ "QT_DISABLE_DEPRECATED_BEFORE=0x050F00" ]
+    cpp.defines: [ "QT_DISABLE_DEPRECATED_BEFORE=0x060800" ]
 
     Properties {
         condition: qbs.targetOS.contains("macos")

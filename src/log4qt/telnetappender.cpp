@@ -31,6 +31,8 @@
 #include <QTcpSocket>
 #include <QHostAddress>
 
+#include <utility>
+
 namespace Log4Qt
 {
 
@@ -132,7 +134,7 @@ void TelnetAppender::append(const LoggingEvent &event)
     Q_ASSERT_X(layout(), "TelnetAppender::append()", "Layout must not be null");
 
     QString message(layout()->format(event));
-    for (auto &&clientConnection : qAsConst(mTcpSockets))
+    for (auto &&clientConnection : std::as_const(mTcpSockets))
     {
         clientConnection->write(message.toLocal8Bit().constData());
         if (immediateFlush())
@@ -166,7 +168,7 @@ void TelnetAppender::closeServer()
     if (mTcpServer != nullptr)
         mTcpServer->close();
 
-    for (auto &&clientConnection : qAsConst(mTcpSockets))
+    for (auto &&clientConnection : std::as_const(mTcpSockets))
         delete clientConnection;
 
     mTcpSockets.clear();

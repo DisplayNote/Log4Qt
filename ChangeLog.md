@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 ----
+## [v1.7.0] - ??
+- Build against Qt 6.8.8 LTS (AB#141677)
+- Minimum required Qt version is 6.8
+- Build and publish the conan package from qt-conan-ci (azure-pipelines.yml)
+### Fixed
+- Honour the PREFIX passed by the CI templates and install the library on every
+  platform; the non-Android install list was built with $$files() at qmake time,
+  when the output directory did not exist yet, so Windows, macOS and iOS
+  installed headers only
+- Replace deprecated Qt 5.15/6.x stuff (QVariant::Type, QSqlField::setType,
+  Qt::TimeSpec date/time overloads, QProcess::systemEnvironment, qAsConst)
+- Drop Q_DECLARE_TYPEINFO for OptionConverter and PatternFormatter, which are
+  not copy- or move-constructible and now fail Qt 6.8's static assert
+
 ## [v1.6.0] - ??
 - Support for Qt6
 - Minimum required Qt version is 5.12

@@ -31,6 +31,8 @@
 
 #include <limits>
 
+#include <utility>
+
 namespace Log4Qt
 {
 
@@ -277,7 +279,7 @@ PatternFormatter::~PatternFormatter()
 QString PatternFormatter::format(const LoggingEvent &loggingEvent) const
 {
     QString result;
-    for (auto &&p_converter : qAsConst(mPatternConverters))
+    for (auto &&p_converter : std::as_const(mPatternConverters))
         p_converter->format(result, loggingEvent);
     return result;
 }
