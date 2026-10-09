@@ -20,8 +20,9 @@ Run `/secret-scan-setup` once per clone (or `--global` once per machine for new 
   LTS). QtTest is required by the CMake build (tests are always added).
 - A C++17 compiler: MSVC 2019+ on Windows, Xcode clang on macOS/iOS, the Android NDK that matches
   your Qt for Android.
-- `qmake` from that Qt on `PATH`, or CMake ≥ 3.3 with `CMAKE_PREFIX_PATH` pointing at the Qt
-  prefix.
+- `qmake` from that Qt on `PATH`, or CMake ≥ 3.16 (the minimum Qt 6 itself requires — the
+  `cmake_minimum_required(VERSION 3.3.0)` in the root `CMakeLists.txt` is an upstream leftover
+  and is not enough for Qt 6) with `CMAKE_PREFIX_PATH` pointing at the Qt prefix.
 - Conan is only needed to reproduce packaging (`src/conanfile.py`); CI does that.
 
 ## 3. Build the library (qmake — what CI ships)
