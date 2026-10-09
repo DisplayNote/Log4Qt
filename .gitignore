@@ -37,3 +37,6 @@ src/log4qt/install/**
 *.obj
 
 
+
+# dn_logscrub placeholder maps hold the ORIGINAL values — never commit them
+*.dnmap
