@@ -49,7 +49,7 @@
 ├── log4qt.pro, build.pri, g++.pri   qmake entry + version/defines + gcc warnings
 ├── CMakeLists.txt            CMake entry (tests + examples always added)
 ├── log4qt.qbs, log4qtlib.qbs, others.qbs   upstream qbs build
-├── azure-pipelines.yml       DisplayNote CI (qt-conan-ci templates, tag 2.4.0)
+├── azure-pipelines.yml       DisplayNote CI (qt-conan-ci templates, tag 2.4.0) + dependency scan
 ├── .travis.yml, appveyor.yml upstream CI configs (Qt 5, not used by DisplayNote)
 └── Readme.md, ChangeLog.md   upstream README (+ DisplayNote macOS section) and changelog
 ```
@@ -171,6 +171,7 @@ See [docs/glossary.md](docs/glossary.md).
 | System | Role | Where configured |
 |---|---|---|
 | Azure Pipelines + `DisplayNote/qt-conan-ci` (tag `2.4.0`) | builds every platform and publishes the conan package `log4qt` | `azure-pipelines.yml` |
+| `DisplayNote/dn-pipeline-templates` (tag `v1.1.2`) | `DependencyScan` stage: OSV-Scanner + Grype, audit mode (AI Security 4.1). Log4Qt depends only on Qt, so `allowNoPackages: true`; the stage must stay after the build stages, because `common/setup.yml@ci` implicitly depends on the stage listed before it | `azure-pipelines.yml` |
 | Conan | packaging of the CI build output | `src/conanfile.py` |
 | Syslog / Windows Event Log | optional sink (`SystemLogAppender`) | consumer configuration |
 | TCP clients (telnet) | optional sink (`TelnetAppender`) | consumer configuration |
