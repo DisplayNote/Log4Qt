@@ -21,7 +21,10 @@ resources:
       # Why do not use GITHUB_CONNECTION variable here? https://developercommunity.visualstudio.com/t/allow-variables-at-resourcesrepositoriesrepository/816606
       endpoint: "DisplayNote through PAT."
       name: DisplayNote/qt-conan-ci
-      ref: refs/tags/2.4.0
+      # VALIDATION BRANCH - do not merge as is (roadmap 2.23). Points at the
+      # unreleased coverage template; before merging, pin the qt-conan-ci tag that
+      # ships it.
+      ref: refs/heads/feature/coverage-template
     # AI Security Roadmap 4.1 — shared dependency-scanning (OSV-Scanner + Grype)
     # templates. v1.1.0 adds the dependency scan; v1.1.2 is the current tag.
     - repository: dn-templates
@@ -33,37 +36,9 @@ resources:
 variables:
   - group: montage-client-environment-variables
 
+# Stage order: DependencyScan -> setup (VERSION) -> tests_coverage -> build
+# stages -> deploy. Every dependency is explicit. (No SecretScan stage here.)
 stages:
-  - template: common/setup.yml@ci
-
-  # The macOS architecture is set by qt-conan-ci, per stage, and this repo pins
-  # none. Nothing is passed from here: the stages assign QMAKE_APPLE_DEVICE_ARCHS
-  # both before the .pro - which is what lets the .pro read it at parse time - and
-  # behind -after, so it still wins over any .pro that hardcodes an architecture.
-  # src/log4qt/log4qt.pro only defaults it to QMAKE_HOST.arch when it is empty.
-  - template: macos-x86_64/build.yml@ci
-    parameters:
-      projectFile: 'Log4Qt/log4qt.pro'
-
-  - template: macos-arm64/build.yml@ci
-    parameters:
-      projectFile: 'Log4Qt/log4qt.pro'
-
-  - template: ios-arm64/build.yml@ci
-    parameters:
-      projectFile: 'Log4Qt/log4qt.pro'
-
-  - template: android-multiabi/build.yml@ci
-    parameters:
-      projectFile: 'Log4Qt/log4qt.pro'
-
-  - template: windows-x86_64/build.yml@ci
-    parameters:
-      projectFile: 'Log4Qt/log4qt.pro'
-
-  # Declares dependsOn: [] so it runs in parallel with the builds. Kept after the
-  # build stages: common/setup.yml@ci declares no dependsOn, so it implicitly
-  # depends on whichever stage is listed before it.
   # Log4Qt depends on nothing but Qt (supplied by qt-conan-ci and scanned in the
   # products that ship it), so there are no lockfiles or manifests for OSV-Scanner
   # to read: allowNoPackages keeps that from failing the gate. The scan still
@@ -73,9 +48,63 @@ stages:
       failOnFindings: false      # audit mode — remove to make the gate blocking
       allowNoPackages: true
 
+  - template: common/setup.yml@ci
+    parameters:
+      dependsOn: [DependencyScan]
+
+  # Roadmap 2.23 — the upstream QTest suites under OpenCppCoverage (Windows,
+  # Debug). The packages are built with qmake, but the tests are only registered
+  # in CMakeLists.txt (add_test), so this stage builds with CMake and runs ctest.
+  # Shared library, like the package, so every compiled line counts; its DLL is
+  # in the build's src/log4qt directory. Examples are not measured.
+  # blocking: false is audit mode: failing tests or coverage below target are
+  # warnings and the builds still run; true makes them stop the builds and the
+  # deploy.
+  - template: windows-x86_64/coverage.yml@ci
+    parameters:
+      enabled: true
+      blocking: false
+      projectFile: 'Log4Qt/CMakeLists.txt'
+      buildSystem: cmake
+      cmakeGenerator: 'Ninja'
+      testConfigArgs: '-DBUILD_WITH_DOCS=OFF'
+      ctest: true
+      excludedSources: ['\examples\']
+      extraPathDirs: ['$(coverageBuildDir)\src\log4qt']
+
+  # The macOS architecture is set by qt-conan-ci, per stage, and this repo pins
+  # none. Nothing is passed from here: the stages assign QMAKE_APPLE_DEVICE_ARCHS
+  # both before the .pro - which is what lets the .pro read it at parse time - and
+  # behind -after, so it still wins over any .pro that hardcodes an architecture.
+  # src/log4qt/log4qt.pro only defaults it to QMAKE_HOST.arch when it is empty.
+  - template: macos-x86_64/build.yml@ci
+    parameters:
+      projectFile: 'Log4Qt/log4qt.pro'
+      dependsOn: [setup, tests_coverage]
+
+  - template: macos-arm64/build.yml@ci
+    parameters:
+      projectFile: 'Log4Qt/log4qt.pro'
+      dependsOn: [setup, tests_coverage]
+
+  - template: ios-arm64/build.yml@ci
+    parameters:
+      projectFile: 'Log4Qt/log4qt.pro'
+      dependsOn: [setup, tests_coverage]
+
+  - template: android-multiabi/build.yml@ci
+    parameters:
+      projectFile: 'Log4Qt/log4qt.pro'
+      dependsOn: [setup, tests_coverage]
+
+  - template: windows-x86_64/build.yml@ci
+    parameters:
+      projectFile: 'Log4Qt/log4qt.pro'
+      dependsOn: [setup, tests_coverage]
+
   - template: common/deploy-develop.yml@ci
     parameters:
       conanfile: 'Log4Qt/src/conanfile.py'
       packageName: 'log4qt'
-      stageDependencies: ['DependencyScan', 'setup', 'windows_x86_64', 'macos_x86_64', 'macos_arm64', 'ios_arm64', 'android_arm64_v8a', 'android_armv7', 'android_x86_64']
+      stageDependencies: ['DependencyScan', 'setup', 'tests_coverage', 'windows_x86_64', 'macos_x86_64', 'macos_arm64', 'ios_arm64', 'android_arm64_v8a', 'android_armv7', 'android_x86_64']
       conanProfiles: ['msvc19.x86_64', 'macos.x86_64', 'macos.arm64', 'ios.arm64', 'android.arm64-v8a', 'android.armeabi-v7a', 'android.x86_64']
