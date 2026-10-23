@@ -54,7 +54,8 @@ stages:
   # Debug). The packages are built with qmake, but the tests are only registered
   # in CMakeLists.txt (add_test), so this stage builds with CMake and runs ctest.
   # Shared library, like the package, so every compiled line counts; its DLL is
-  # in the build's src/log4qt directory. Examples are not measured.
+  # in the build's bin directory (CMAKE_RUNTIME_OUTPUT_DIRECTORY in
+  # src/log4qt/CMakeLists.txt). Examples are not measured.
   # blocking: false is audit mode: failing tests or coverage below target are
   # warnings and the builds still run; true makes them stop the builds and the
   # deploy.
@@ -68,7 +69,7 @@ stages:
       testConfigArgs: '-DBUILD_WITH_DOCS=OFF'
       ctest: true
       excludedSources: ['\examples\']
-      extraPathDirs: ['$(coverageBuildDir)\src\log4qt']
+      extraPathDirs: ['$(coverageBuildDir)\bin']
 
   # The macOS architecture is set by qt-conan-ci, per stage, and this repo pins
   # none. Nothing is passed from here: the stages assign QMAKE_APPLE_DEVICE_ARCHS
