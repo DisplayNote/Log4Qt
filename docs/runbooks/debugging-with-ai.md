@@ -157,8 +157,8 @@ the message context (typically empty in Qt release builds unless
   where they outlive the app's own log files; `SignalAppender` hands the
   formatted message to app code, which may forward it anywhere.
 
-CI (`azure-pipelines.yml`) only builds and packages the library; it runs no tests
-and no script in this repo writes transcripts or log files. Locally, the test
+CI (`azure-pipelines.yml`) builds and packages the library and runs the CMake test
+suites (`tests_coverage`) on its agents; no script in this repo writes transcripts or log files. Locally, the test
 suites write synthetic test messages to temp directories (`tests/log4qttest/log4qttest.cpp`,
 `tests/dailyfileappendertest/dailyfileappendertest.cpp`, `tests/filewatcher/tst_filewatchertest.cpp`).
 User-home path parts, IPs and `password=`/`token=` values are handled by the

@@ -2,9 +2,12 @@
 
 ## What exists
 
-Unit tests only, all Qt Test executables under `tests/`. No integration, UI or end-to-end tests, and
-**DisplayNote CI does not build or run them**: `azure-pipelines.yml` builds `log4qt.pro`, whose
-`SUBDIRS` is `src` only.
+Unit tests only, all Qt Test executables under `tests/`. No integration, UI or end-to-end tests.
+The package builds don't run them (`log4qt.pro`'s `SUBDIRS` is `src` only). The `tests_coverage`
+stage in `azure-pipelines.yml` (qt-conan-ci `windows-x86_64/coverage.yml`) builds the CMake project
+in Debug on Windows and runs `ctest` under OpenCppCoverage, so only the suites registered in CMake
+run in CI (`tst_filewatchertest` does not). It is non-blocking (`blocking: false`): failing tests
+or coverage below target are warnings.
 
 | Suite | Path | Covers | Build systems |
 |---|---|---|---|
