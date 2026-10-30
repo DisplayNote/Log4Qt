@@ -9,7 +9,7 @@
 2. Add the changes to `ChangeLog.md` under the current section (`[v1.7.0]` today).
 3. Tag the merge commit on `master`. DisplayNote tags are plain numbers (`2.0.0`, `2.1.0`); the
    upstream `v1.x.y` tags are history. Pushing any tag triggers the pipeline (`trigger: tags: include: '*'`).
-4. The pipeline runs the `DependencyScan` stage (`dn-pipeline-templates`, audit mode), then the
+4. The pipeline runs the `DependencyScan` stage (`dn-pipeline-templates`, blocking), then the
    `DisplayNote/qt-conan-ci` templates pinned to tag `2.5.0`: `common/setup.yml`,
    `windows-x86_64/coverage.yml` (`tests_coverage`: the CMake test suites under OpenCppCoverage,
    non-blocking), one build stage per platform (`macos-x86_64`, `macos-arm64`, `ios-arm64`,
