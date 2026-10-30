@@ -171,7 +171,7 @@ See [docs/glossary.md](docs/glossary.md).
 | System | Role | Where configured |
 |---|---|---|
 | Azure Pipelines + `DisplayNote/qt-conan-ci` (tag `2.5.0`) | runs the CMake test suites under coverage (`tests_coverage`, Windows, audit mode), builds every platform and publishes the conan package `log4qt` | `azure-pipelines.yml` |
-| `DisplayNote/dn-pipeline-templates` (tag `v1.1.2`) | `DependencyScan` stage: OSV-Scanner + Grype, audit mode (AI Security 4.1). Log4Qt depends only on Qt, so `allowNoPackages: true`. It is the first stage; `setup` declares `dependsOn: [DependencyScan]` and every later dependency is explicit | `azure-pipelines.yml` |
+| `DisplayNote/dn-pipeline-templates` (tag `v1.1.2`) | `DependencyScan` stage: OSV-Scanner + Grype, blocking: a finding fails the pipeline (AI Security 4.1). Log4Qt depends only on Qt, so `allowNoPackages: true`. It is the first stage; `setup` declares `dependsOn: [DependencyScan]` and every later dependency is explicit | `azure-pipelines.yml` |
 | Conan | packaging of the CI build output | `src/conanfile.py` |
 | Syslog / Windows Event Log | optional sink (`SystemLogAppender`) | consumer configuration |
 | TCP clients (telnet) | optional sink (`TelnetAppender`) | consumer configuration |
