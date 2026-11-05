@@ -29,7 +29,7 @@ resources:
       type: github
       endpoint: "DisplayNote through PAT."
       name: DisplayNote/dn-pipeline-templates
-      ref: refs/tags/v1.1.2
+      ref: refs/heads/main
 
 variables:
   - group: montage-client-environment-variables
@@ -43,6 +43,9 @@ stages:
   # catches any Conan requirement added later.
   - template: dependency-scan-stage.yml@dn-templates
     parameters:
+      pool:
+        name: agent-pool-ubuntu2204-short-jobs-vmss
+      workspaceClean: all
       allowNoPackages: true
 
   - template: common/setup.yml@ci
