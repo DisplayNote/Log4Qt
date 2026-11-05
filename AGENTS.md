@@ -71,7 +71,7 @@ do not hand-edit them; land changes in the plugin and re-sync with `/sync-skill 
 ├── log4qt.pro, build.pri, g++.pri   qmake entry + version/defines + gcc warnings
 ├── CMakeLists.txt            CMake entry (tests + examples always added)
 ├── log4qt.qbs, log4qtlib.qbs, others.qbs   upstream qbs build
-├── azure-pipelines.yml       DisplayNote CI (qt-conan-ci templates, tag 2.5.0) + secret and dependency scans + tests/coverage
+├── azure-pipelines.yml       DisplayNote CI (qt-conan-ci templates, tag 2.8.1) + secret and dependency scans + tests/coverage
 ├── .gitleaks.toml, .gitleaksignore   secret-scan config and accepted findings (none today)
 ├── .agents/, .github/skills/ DisplayNote-vendored agent skills (code-review, log-sanitise), synced
 │                             from displaynote-engineering; .github/instructions/ tells Copilot so
@@ -206,7 +206,7 @@ See [docs/glossary.md](docs/glossary.md).
 
 | System | Role | Where configured |
 |---|---|---|
-| Azure Pipelines + `DisplayNote/qt-conan-ci` (tag `2.5.0`) | runs the CMake test suites under coverage (`tests_coverage`, Windows, audit mode), builds every platform and publishes the conan package `log4qt` | `azure-pipelines.yml` |
+| Azure Pipelines + `DisplayNote/qt-conan-ci` (tag `2.8.1`) | runs the CMake test suites under coverage (`tests_coverage`, Windows, audit mode), builds every platform and publishes the conan package `log4qt`. Both template repositories are reached through the `DisplayNote` GitHub App service connection, not a personal access token (#10) | `azure-pipelines.yml` |
 | `DisplayNote/dn-pipeline-templates` (tracked from `main`) | `SecretScan` stage (gitleaks, full history) and `DependencyScan` stage (OSV-Scanner + Grype), both blocking: a finding fails the pipeline (AI Security 4.1). Log4Qt depends only on Qt, so `DependencyScan` has `allowNoPackages: true`. The two scans run first and in parallel; `setup` declares `dependsOn: [SecretScan, DependencyScan]` and every later dependency is explicit | `azure-pipelines.yml`, `.gitleaks.toml`, `.gitleaksignore` |
 | GitHub Actions | DisplayNote docs-sync workflows (roadmap 2.30): `docs-sync.yml` nightly and `docs-catchup.yml` weekly (Mon 05:00 UTC) and on demand, each opening one documentation PR against `master`; they need the `COPILOT_PAT` secret and skip the agent step without it. Also Copilot code review. Not a build gate (Azure Pipelines is) | `.github/workflows/`, [tools/docs-sync/README.md](tools/docs-sync/README.md) |
 | Conan | packaging of the CI build output | `src/conanfile.py` |
