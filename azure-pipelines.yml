@@ -19,15 +19,16 @@ resources:
     - repository: ci
       type: github
       # Why do not use GITHUB_CONNECTION variable here? https://developercommunity.visualstudio.com/t/allow-variables-at-resourcesrepositoriesrepository/816606
-      endpoint: "DisplayNote through PAT."
+      endpoint: "DisplayNote"
       name: DisplayNote/qt-conan-ci
       # 2.5.0 adds the tests + coverage stage (roadmap 2.23).
-      ref: refs/tags/2.5.0
+      # 2.8.1 keeps 2.8.0's templates; only its examples moved to the DisplayNote GitHub App connection.
+      ref: refs/tags/2.8.1
     # AI Security Roadmap 4.1 — shared dependency-scanning (OSV-Scanner + Grype)
     # templates. v1.1.0 adds the dependency scan; main is tracked with v1.3.0 as its baseline.
     - repository: dn-templates
       type: github
-      endpoint: "DisplayNote through PAT."
+      endpoint: "DisplayNote"
       name: DisplayNote/dn-pipeline-templates
       ref: refs/heads/main
 
