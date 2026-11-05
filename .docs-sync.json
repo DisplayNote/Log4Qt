@@ -58,8 +58,15 @@
       "src/log4qt/helpers/datetime.h", "src/log4qt/helpers/datetime.cpp",
       "src/log4qt/helpers/dispatcher.h", "src/log4qt/helpers/dispatcher.cpp",
       "src/log4qt/helpers/patternformatter.h", "src/log4qt/helpers/patternformatter.cpp",
-      "src/log4qt/spi",
-      "src/log4qt/varia"
+      "src/log4qt/spi/filter.h", "src/log4qt/spi/filter.cpp",
+      "src/log4qt/varia/binaryeventfilter.h", "src/log4qt/varia/binaryeventfilter.cpp",
+      "src/log4qt/varia/debugappender.h", "src/log4qt/varia/debugappender.cpp",
+      "src/log4qt/varia/denyallfilter.h", "src/log4qt/varia/denyallfilter.cpp",
+      "src/log4qt/varia/levelmatchfilter.h", "src/log4qt/varia/levelmatchfilter.cpp",
+      "src/log4qt/varia/levelrangefilter.h", "src/log4qt/varia/levelrangefilter.cpp",
+      "src/log4qt/varia/listappender.h", "src/log4qt/varia/listappender.cpp",
+      "src/log4qt/varia/nullappender.h", "src/log4qt/varia/nullappender.cpp",
+      "src/log4qt/varia/stringmatchfilter.h", "src/log4qt/varia/stringmatchfilter.cpp"
     ] },
     { "name": "configuration", "doc": "docs/modules/configuration.md", "code_paths": [
       "src/log4qt/basicconfigurator.h", "src/log4qt/basicconfigurator.cpp",
