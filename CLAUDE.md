@@ -17,6 +17,17 @@ adds the short imperative rules for Claude Code.
 - Add a `ChangeLog.md` entry under the current DisplayNote version for user-visible changes.
 - Sanitise any log before reading it: `/log-sanitise <file>` (see
   `docs/runbooks/debugging-with-ai.md`).
+- Know the CI stage order: `SecretScan` + `DependencyScan` (in parallel, `dependsOn: []`) →
+  `setup` → `tests_coverage` → build stages → deploy. Every dependency is explicit; a new build
+  stage needs `dependsOn: [setup, tests_coverage]` and an entry in the deploy stage's
+  `stageDependencies`.
+- Treat the gitleaks `SecretScan` gate as blocking: it scans the full history of the built ref.
+  `.gitleaks.toml` allowlist entries each need a `description`; `.gitleaksignore` fingerprints each
+  need a preceding comment line (never a trailing one). Never widen either just to silence a
+  finding.
+- Treat `.agents/skills/*` and `.github/skills/*` as generated: re-sync with `/sync-skill <name>`
+  from the `displaynote-engineering` plugin instead of hand-editing.
+- When adding a source file, also add it to the right module in `.docs-sync.json`.
 
 ## DON'T
 
