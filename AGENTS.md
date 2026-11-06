@@ -28,6 +28,27 @@
   `Log4Qt` (LogLog) logger as a change to what every consuming app writes to disk, console or the
   network. `TelnetAppender` (compiled into the DisplayNote qmake build) opens a TCP listener —
   flag any change to it. See [docs/runbooks/debugging-with-ai.md](docs/runbooks/debugging-with-ai.md).
+- CI runs a gitleaks secret-scan gate (`SecretScan` stage, `secret-scan-stage.yml@dn-templates` in
+  `azure-pipelines.yml`) in parallel with `DependencyScan`, ahead of every build/deploy stage. It is
+  **blocking** (the template default, `failOnFindings: true`): any finding in the full history of
+  the built ref that is not accepted in `.gitleaksignore` fails the stage, so setup, tests, builds and
+  deploy don't run. Repo-specific exceptions live at the repo root: allowlists in `.gitleaks.toml`,
+  where every `[[allowlists]]` entry needs a `description` saying why it's safe, and accepted
+  findings in `.gitleaksignore`, one fingerprint per line, each preceded by its own comment line
+  saying what it was, why it's safe now, and who accepted it when (gitleaks ignores an entry with a
+  trailing comment). None is accepted today: the full history scans clean. The stage also applies
+  the DisplayNote `dn-credential-call-argument` rule on top of `.gitleaks.toml`, so reproduce it
+  locally with that rule too. Never widen an allowlist to make the gate green — rotate/remove the
+  real secret instead.
+
+This repo also carries a mandatory `code-review` agent skill (AI Security Roadmap §4.2) with two
+identical copies — `.agents/skills/code-review/SKILL.md` (Codex, Kiro, and similar agents) and
+`.github/skills/code-review/SKILL.md` (GitHub Copilot) — that runs a pre-PR review and requires
+every AI review to end with a `Security:` line covering injection, hardcoded secrets, insecure
+direct object references, and CVE-affected dependencies. Both copies are generated from the
+`displaynote-engineering` plugin's canonical skill, as are the `log-sanitise` copies next to them;
+do not hand-edit them; land changes in the plugin and re-sync with `/sync-skill code-review` and
+`/sync-skill log-sanitise`.
 
 ## Repository map
 
@@ -45,11 +66,19 @@
 ├── examples/                 basic (programmatic setup), propertyconfigurator (properties file)
 ├── cmake/                    CMake package config templates
 ├── doc/                      upstream Doxygen config (`Doxyfile.in`) — upstream material, do not edit
-├── docs/                     AI-agent docs (architecture, modules, runbooks, glossary)
+├── docs/                     AI-agent docs (architecture, modules, runbooks, glossary);
+│                             docs/ai/prompts/docs-maintenance.md is the docs-sync agent's prompt
 ├── log4qt.pro, build.pri, g++.pri   qmake entry + version/defines + gcc warnings
 ├── CMakeLists.txt            CMake entry (tests + examples always added)
 ├── log4qt.qbs, log4qtlib.qbs, others.qbs   upstream qbs build
-├── azure-pipelines.yml       DisplayNote CI (qt-conan-ci templates, tag 2.5.0) + dependency scan + tests/coverage
+├── azure-pipelines.yml       DisplayNote CI (qt-conan-ci templates, tag 2.8.1) + secret and dependency scans + tests/coverage
+├── .gitleaks.toml, .gitleaksignore   secret-scan config and accepted findings (none today)
+├── .agents/, .github/skills/ DisplayNote-vendored agent skills (code-review, log-sanitise), synced
+│                             from displaynote-engineering; .github/instructions/ tells Copilot so
+├── .github/workflows/        DisplayNote docs-sync workflows (docs-sync.yml nightly, docs-catchup.yml)
+├── tools/docs-sync/          docs-sync pack (roadmap 2.30): agent runner, PR opener,
+│                             docs_freshness.py coverage/freshness metric; see its README.md
+├── .docs-sync.json           docs-sync manifest: module -> doc (docs/modules/*.md) -> source files
 ├── .travis.yml, appveyor.yml upstream CI configs (Qt 5, not used by DisplayNote)
 └── Readme.md, ChangeLog.md   upstream README (+ DisplayNote macOS section) and changelog
 ```
@@ -161,6 +190,13 @@ Deeper view: [docs/architecture.md](docs/architecture.md).
 - `SignalAppender::appended` carries `(int level, QString message)` in this fork (upstream: message
   only).
 - Qt Creator user files (`*.pro.user`) are gitignored; one may exist in a local checkout.
+- The `SecretScan` stage scans the full history of the built ref, upstream Log4Qt history
+  included, so a finding in an old (or newly merged upstream) commit fails CI until it is triaged:
+  rotate it if real, then accept it by fingerprint in `.gitleaksignore`. PRs that only touch `doc`,
+  `Readme.md` or `ChangeLog.md` are path-excluded and get no pipeline run, so no scan.
+- `.docs-sync.json` lists source **files**, not folders, because `src/log4qt/` keeps core, appenders,
+  layouts and configurators side by side. A new source file must be added to the module it belongs
+  to, or the nightly docs-sync freshness metric won't see changes to it.
 
 ## Glossary
 
@@ -170,8 +206,9 @@ See [docs/glossary.md](docs/glossary.md).
 
 | System | Role | Where configured |
 |---|---|---|
-| Azure Pipelines + `DisplayNote/qt-conan-ci` (tag `2.5.0`) | runs the CMake test suites under coverage (`tests_coverage`, Windows, audit mode), builds every platform and publishes the conan package `log4qt` | `azure-pipelines.yml` |
-| `DisplayNote/dn-pipeline-templates` (tag `v1.1.2`) | `DependencyScan` stage: OSV-Scanner + Grype, blocking: a finding fails the pipeline (AI Security 4.1). Log4Qt depends only on Qt, so `allowNoPackages: true`. It is the first stage; `setup` declares `dependsOn: [DependencyScan]` and every later dependency is explicit | `azure-pipelines.yml` |
+| Azure Pipelines + `DisplayNote/qt-conan-ci` (tag `2.8.1`) | runs the CMake test suites under coverage (`tests_coverage`, Windows, audit mode), builds every platform and publishes the conan package `log4qt`. Both template repositories are reached through the `DisplayNote` GitHub App service connection, not a personal access token (#10) | `azure-pipelines.yml` |
+| `DisplayNote/dn-pipeline-templates` (tracked from `main`) | `SecretScan` stage (gitleaks, full history) and `DependencyScan` stage (OSV-Scanner + Grype), both blocking: a finding fails the pipeline (AI Security 4.1). Log4Qt depends only on Qt, so `DependencyScan` has `allowNoPackages: true`. The two scans run first and in parallel; `setup` declares `dependsOn: [SecretScan, DependencyScan]` and every later dependency is explicit | `azure-pipelines.yml`, `.gitleaks.toml`, `.gitleaksignore` |
+| GitHub Actions | DisplayNote docs-sync workflows (roadmap 2.30): `docs-sync.yml` nightly and `docs-catchup.yml` weekly (Mon 05:00 UTC) and on demand, each opening one documentation PR against `master`; they need the `COPILOT_PAT` secret and skip the agent step without it. Also Copilot code review. Not a build gate (Azure Pipelines is) | `.github/workflows/`, [tools/docs-sync/README.md](tools/docs-sync/README.md) |
 | Conan | packaging of the CI build output | `src/conanfile.py` |
 | Syslog / Windows Event Log | optional sink (`SystemLogAppender`) | consumer configuration |
 | TCP clients (telnet) | optional sink (`TelnetAppender`) | consumer configuration |

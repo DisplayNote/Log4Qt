@@ -35,9 +35,21 @@ resources:
 variables:
   - group: montage-client-environment-variables
 
-# Stage order: DependencyScan -> setup (VERSION) -> tests_coverage -> build
-# stages -> deploy. Every dependency is explicit. (No SecretScan stage here.)
+# Stage order: SecretScan + DependencyScan (in parallel) -> setup (VERSION) ->
+# tests_coverage -> build stages -> deploy. Every dependency is explicit.
 stages:
+  # AI Security Roadmap 4.1 — secret scanning from the same dn-templates
+  # resource. Both scan stages declare dependsOn: [], so they start together.
+  # gitleaks over the full history of the built ref, upstream Log4Qt history
+  # included; blocking (template default failOnFindings: true). Accepted
+  # findings live in .gitleaksignore at the repo root, one fingerprint per line,
+  # each preceded by its own comment line.
+  - template: secret-scan-stage.yml@dn-templates
+    parameters:
+      pool:
+        name: agent-pool-ubuntu2204-short-jobs-vmss
+      workspaceClean: all
+
   # Log4Qt depends on nothing but Qt (supplied by qt-conan-ci and scanned in the
   # products that ship it), so there are no lockfiles or manifests for OSV-Scanner
   # to read: allowNoPackages keeps that from failing the gate. The scan still
@@ -51,7 +63,7 @@ stages:
 
   - template: common/setup.yml@ci
     parameters:
-      dependsOn: [DependencyScan]
+      dependsOn: [SecretScan, DependencyScan]
 
   # Roadmap 2.23 — the upstream QTest suites under OpenCppCoverage (Windows,
   # Debug). The packages are built with qmake, but the tests are only registered
@@ -108,5 +120,5 @@ stages:
     parameters:
       conanfile: 'Log4Qt/src/conanfile.py'
       packageName: 'log4qt'
-      stageDependencies: ['DependencyScan', 'setup', 'tests_coverage', 'windows_x86_64', 'macos_x86_64', 'macos_arm64', 'ios_arm64', 'android_arm64_v8a', 'android_armv7', 'android_x86_64']
+      stageDependencies: ['SecretScan', 'DependencyScan', 'setup', 'tests_coverage', 'windows_x86_64', 'macos_x86_64', 'macos_arm64', 'ios_arm64', 'android_arm64_v8a', 'android_armv7', 'android_x86_64']
       conanProfiles: ['msvc19.x86_64', 'macos.x86_64', 'macos.arm64', 'ios.arm64', 'android.arm64-v8a', 'android.armeabi-v7a', 'android.x86_64']
